@@ -57,14 +57,17 @@ module CompassRails
     def context
       load_rails
       @context ||= begin
-        sprockets.version = ::Rails.env + "-#{sprockets.version}"
-        setup_fake_rails_env_paths(sprockets)
-        context = ::Rails.application.assets.context_class
+        if sprockets && ::Rails.application.assets
+          sprockets.version = ::Rails.env + "-#{sprockets.version}"
+          setup_fake_rails_env_paths(sprockets)
+          context = ::Rails.application.assets.context_class
+        end
+
         context.extend(::Sprockets::Helpers::IsolatedHelper)
         context.extend(::Sprockets::Helpers::RailsHelper)
         context.extend(::Sass::Rails::Railtie::SassContext)
         context.sass_config = sass_config
-
+                     
         context
       end
     end
